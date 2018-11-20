@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,27 +20,31 @@ public class QuestionsActivity extends AppCompatActivity {
     private Button buttonFirstAnswer, buttonSecondAnswer, buttonThirdAnswer, buttonFourthAnswer;
 
     private String answer;
+    private Boolean testResult;
 
     private ArrayList<String> propositions;
+
+    /*
+    * Test after click on any answer
+    */
 
     private View.OnClickListener validAnswer = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Button tappedAnswer = (Button) v;
             answer = tappedAnswer.getText().toString();
-            if(answer == question.getBonneReponse()){
-                Intent intent = new Intent(QuestionsActivity.this,AnswerActivity.class);
+            Intent intent = new Intent(QuestionsActivity.this, AnswerActivity.class);
+            if(question.verifierReponse(answer)) {
+                intent.putExtra("result_answer", true);
                 startActivity(intent);
             } else {
-
+                intent.putExtra("result_answer", false);
+                startActivity(intent);
             }
         }
     };
 
     Question question = new Question("Quelle est la capitale de la France ?", 4);
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,9 @@ public class QuestionsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /**
+         * Setup question
+         */
 
         question.addProposition("Paris");
         question.addProposition("Londres");
@@ -72,7 +80,7 @@ public class QuestionsActivity extends AppCompatActivity {
         buttonSecondAnswer.setOnClickListener(validAnswer);
         buttonThirdAnswer.setOnClickListener(validAnswer);
         buttonFourthAnswer.setOnClickListener(validAnswer);
-        
+
     }
 
 }

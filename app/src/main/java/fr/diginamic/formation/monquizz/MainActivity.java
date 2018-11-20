@@ -18,6 +18,10 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    /*
+    * Click action for launch the game
+    */
+
     private Button buttonPlay;
 
     private View.OnClickListener goQuizz = new View.OnClickListener() {

@@ -6,7 +6,6 @@
     >
 
     <TextView
-        android:text="Intitulé de la question"
         android:id="@+id/intitulequestion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

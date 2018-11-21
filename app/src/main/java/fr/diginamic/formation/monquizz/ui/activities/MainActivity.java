@@ -12,17 +12,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.model.Question;
 import fr.diginamic.formation.monquizz.ui.adapters.QuestionListFragment;
-import fr.diginamic.formation.monquizz.ui.fragments.PlayFragment;
+import fr.diginamic.formation.monquizz.ui.fragments.CreateQuestion;
 import fr.diginamic.formation.monquizz.ui.fragments.ScoreFragment;
 import fr.diginamic.formation.monquizz.ui.fragments.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PlayFragment.OnFragmentInteractionListener, ScoreFragment.OnFragmentInteractionListener,
-        SettingsFragment.OnFragmentInteractionListener, QuestionListFragment.OnListQuestionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, QuestionListFragment.OnListQuestionListener, CreateQuestion.OnCreateListener {
 
+    public static List<Question> list = new ArrayList<Question>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,30 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.container_layout, fragment)
                     .commit();
         }
+
+        list.clear();
+
+        Question question1 = new Question("Quelle est la capitale de la France ?", 4);
+
+        question1.addProposition("Paris");
+        question1.addProposition("Londres");
+        question1.addProposition("Rome");
+        question1.addProposition("Madrid");
+        question1.setBonneReponse("Paris");
+
+        list.add(question1);
+
+        Question question2 = new Question("Combien de paupières ont les poissons ?", 4);
+
+        question2.addProposition("1");
+        question2.addProposition("3");
+        question2.addProposition("0");
+        question2.addProposition("2");
+        question2.setBonneReponse("0");
+
+        list.add(question2);
+
+
     }
 
     @Override
@@ -98,8 +125,12 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container_layout, fragment)
                     .commit();
-        } else if (id == R.id.nav_info) {
-
+        } else if (id == R.id.nav_create_question) {
+            CreateQuestion fragment = new CreateQuestion();
+            fragment.listener = this;
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_layout, fragment)
+                    .commit();
         } else if (id == R.id.nav_setting) {
             SettingsFragment fragment = new SettingsFragment();
             getSupportFragmentManager().beginTransaction()
@@ -117,14 +148,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-        //FIXME LATER
-    }
-
-    @Override
     public void onListFragmentInteraction(Question item) {
         Intent intent = new Intent(MainActivity.this, QuestionsActivity.class);
         intent.putExtra("item",item);
         startActivity(intent);
+    }
+
+    @Override
+    public void createQuestion(Question q) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.container_layout, new QuestionListFragment()).commit();
+        list.add(q);
     }
 }

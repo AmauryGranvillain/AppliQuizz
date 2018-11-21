@@ -7,19 +7,19 @@
         <item
             android:id="@+id/nav_game"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Play" />
+            android:title="@string/nav_title_play" />
         <item
             android:id="@+id/nav_score"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Score" />
+            android:title="@string/nav_title_score" />
         <item
-            android:id="@+id/nav_info"
+            android:id="@+id/nav_create_question"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Liste des questions" />
+            android:title="@string/nav_title_create_question" />
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Setttings" />
+            android:title="@string/nav_title_settings" />
     </group>
 
     <item android:title="Communicate">

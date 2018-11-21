@@ -11,4 +11,16 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_title_infos">Infos</string>
+    <string name="nav_title_settings">Settings</string>
+    <string name="nav_title_score">Score</string>
+    <string name="nav_title_play">Play</string>
+    <string name="correct_answer">Bonne réponse !</string>
+    <string name="wrong_answer">Mauvaise réponse !</string>
+    <string name="play_title_button">Jouer</string>
+    <string name="title_score_moment">Score actuelle</string>
+    <string name="title_fragment_settings">Settings</string>
+    <string name="separation_score">/</string>
+    <string name="score_total">20</string>
+    <string name="nav_title_create_question">Create your question</string>
 </resources>

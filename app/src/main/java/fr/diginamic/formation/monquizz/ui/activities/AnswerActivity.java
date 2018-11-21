@@ -1,5 +1,6 @@
 package fr.diginamic.formation.monquizz.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,16 +10,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import fr.diginamic.formation.monquizz.R;
+import fr.diginamic.formation.monquizz.ui.fragments.ScoreFragment;
 
 public class AnswerActivity extends AppCompatActivity {
 
     private Boolean result;
 
     private TextView textResult;
-
-    /*
-    * Verify answer and show the result
-    */
+    private static int scoreUser = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +29,11 @@ public class AnswerActivity extends AppCompatActivity {
         this.textResult = findViewById(R.id.show_results);
 
         if( getIntent().getBooleanExtra("result_answer", true)){
-            textResult.setText("Bonne réponse !");
+            textResult.setText(getString(R.string.correct_answer));
+            scoreUser++;
         } else {
-            textResult.setText("Mauvaise réponse !");
+            textResult.setText(getString(R.string.wrong_answer));
         }
-
     }
 
 }

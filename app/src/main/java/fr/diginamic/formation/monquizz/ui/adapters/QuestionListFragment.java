@@ -12,16 +12,11 @@ import android.view.ViewGroup;
 
 import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.model.Question;
+import fr.diginamic.formation.monquizz.ui.activities.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListQuestionListener}
- * interface.
- */
 public class QuestionListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
@@ -30,10 +25,6 @@ public class QuestionListFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListQuestionListener mListener;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public QuestionListFragment() {
     }
 
@@ -61,32 +52,6 @@ public class QuestionListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_question_list, container, false);
 
-
-        /**
-         * Setup question
-         */
-        
-        List<Question> list = new ArrayList<Question>();
-        Question question1 = new Question("Quelle est la capitale de la France ?", 4);
-
-        question1.addProposition("Paris");
-        question1.addProposition("Londres");
-        question1.addProposition("Rome");
-        question1.addProposition("Madrid");
-        question1.setBonneReponse("Paris");
-        
-        list.add(question1);
-
-        Question question2 = new Question("Combien de paupières ont les poissons ?", 4);
-
-        question2.addProposition("1");
-        question2.addProposition("3");
-        question2.addProposition("0");
-        question2.addProposition("2");
-        question2.setBonneReponse("0");
-
-        list.add(question2);
-
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -96,7 +61,7 @@ public class QuestionListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new QuestionRecyclerViewAdapter(list, mListener));
+            recyclerView.setAdapter(new QuestionRecyclerViewAdapter(MainActivity.list, mListener));
         }
         return view;
     }
@@ -119,18 +84,7 @@ public class QuestionListFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnListQuestionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(Question item);
     }
 }

@@ -66,9 +66,6 @@ public class QuestionsActivity extends AppCompatActivity {
         this.buttonThirdAnswer = findViewById(R.id.button_thirdanswer);
         this.buttonFourthAnswer = findViewById(R.id.button_fourthanswer);
 
-
-
-
         intitule.setText(question.getIntitule());
         buttonFirstAnswer.setText(question.getPropositions().get(0));
         buttonSecondAnswer.setText(question.getPropositions().get(1));

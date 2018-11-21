@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Score actuelle"
+        android:text="@string/title_score_moment"
         android:textSize="35dp"
         android:textColor="@color/colorPrimary"
         android:layout_marginBottom="25dp"
@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="/"
+            android:text="@string/separation_score"
             android:textSize="25dp"
             android:textColor="@color/colorPrimaryDark"
             />
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/score_total"
-            android:text="20"
+            android:text="@string/score_total"
             android:textSize="25dp"
             android:textColor="@color/colorPrimaryDark"
             />

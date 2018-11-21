@@ -4,11 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.model.Question;
@@ -78,17 +80,27 @@ public class CreateQuestion extends Fragment {
             @Override
             public void onClick(View v) {
 
-               String stringCorrectAnswer = editTextAnswerSelected.getText().toString();
+                if(editTextAnswerSelected == null){
 
-                Question question = new Question(editTextQuestion.getText().toString(), 4);
+                    Toast toast = Toast.makeText(getContext(), "Select the good answer please !", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.TOP|Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
 
-                question.addProposition(editTextAnswer1.getText().toString());
-                question.addProposition(editTextAnswer2.getText().toString());
-                question.addProposition(editTextAnswer3.getText().toString());
-                question.addProposition(editTextAnswer4.getText().toString());
-                question.setBonneReponse(stringCorrectAnswer);
+                } else {
 
-                listener.createQuestion(question);
+                    String stringCorrectAnswer = editTextAnswerSelected.getText().toString();
+
+                    Question question = new Question(editTextQuestion.getText().toString(), 4);
+
+                    question.addProposition(editTextAnswer1.getText().toString());
+                    question.addProposition(editTextAnswer2.getText().toString());
+                    question.addProposition(editTextAnswer3.getText().toString());
+                    question.addProposition(editTextAnswer4.getText().toString());
+                    question.setBonneReponse(stringCorrectAnswer);
+
+                    listener.createQuestion(question);
+
+                }
             }
         });
 
@@ -100,6 +112,10 @@ public class CreateQuestion extends Fragment {
         super.onDetach();
         listener = null;
     }
+
+    /*
+    Possibilty to select only one RadioButton and collect the good answer
+     */
 
     public void checkedRadioButton(RadioButton check){
         if (check.isChecked()) {

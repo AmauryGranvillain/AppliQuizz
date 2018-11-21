@@ -1,17 +1,17 @@
-package fr.diginamic.formation.monquizz;
+package fr.diginamic.formation.monquizz.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import fr.diginamic.formation.monquizz.model.Question;
+import fr.diginamic.formation.monquizz.R;
 
 public class QuestionsActivity extends AppCompatActivity {
 
@@ -25,8 +25,10 @@ public class QuestionsActivity extends AppCompatActivity {
     private ArrayList<String> propositions;
 
     /*
-    * Test after click on any answer
+    * Test result after click on any answer
     */
+
+    Question question;
 
     private View.OnClickListener validAnswer = new View.OnClickListener() {
         @Override
@@ -44,8 +46,6 @@ public class QuestionsActivity extends AppCompatActivity {
         }
     };
 
-    Question question = new Question("Quelle est la capitale de la France ?", 4);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -58,17 +58,16 @@ public class QuestionsActivity extends AppCompatActivity {
          * Setup question
          */
 
-        question.addProposition("Paris");
-        question.addProposition("Londres");
-        question.addProposition("Rome");
-        question.addProposition("Madrid");
-        question.setBonneReponse("Paris");
+        question = getIntent().getParcelableExtra("item");
 
         this.intitule = findViewById(R.id.intitule_question);
         this.buttonFirstAnswer = findViewById(R.id.button_firstanswer);
         this.buttonSecondAnswer = findViewById(R.id.button_secondanswer);
         this.buttonThirdAnswer = findViewById(R.id.button_thirdanswer);
         this.buttonFourthAnswer = findViewById(R.id.button_fourthanswer);
+
+
+
 
         intitule.setText(question.getIntitule());
         buttonFirstAnswer.setText(question.getPropositions().get(0));

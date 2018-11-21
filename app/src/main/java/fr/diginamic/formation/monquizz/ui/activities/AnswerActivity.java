@@ -1,4 +1,4 @@
-package fr.diginamic.formation.monquizz;
+package fr.diginamic.formation.monquizz.ui.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
+
+import fr.diginamic.formation.monquizz.R;
 
 public class AnswerActivity extends AppCompatActivity {
 

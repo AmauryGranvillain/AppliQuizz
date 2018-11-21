@@ -1,10 +1,8 @@
-package fr.diginamic.formation.monquizz;
+package fr.diginamic.formation.monquizz.ui.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,24 +11,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+
+import fr.diginamic.formation.monquizz.R;
+import fr.diginamic.formation.monquizz.model.Question;
+import fr.diginamic.formation.monquizz.ui.adapters.QuestionListFragment;
+import fr.diginamic.formation.monquizz.ui.fragments.PlayFragment;
+import fr.diginamic.formation.monquizz.ui.fragments.ScoreFragment;
+import fr.diginamic.formation.monquizz.ui.fragments.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, PlayFragment.OnFragmentInteractionListener, ScoreFragment.OnFragmentInteractionListener,
+        SettingsFragment.OnFragmentInteractionListener, QuestionListFragment.OnListQuestionListener {
 
-    /*
-    * Click action for launch the game
-    */
-
-    private Button buttonPlay;
-
-    private View.OnClickListener goQuizz = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this,QuestionsActivity.class);
-            startActivity(intent);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +40,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        this.buttonPlay = findViewById(R.id.play_button);
-        buttonPlay.setOnClickListener(goQuizz);
+        if(savedInstanceState == null){
+            QuestionListFragment fragment = new QuestionListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_layout, fragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -78,9 +74,11 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            SettingsFragment fragment = new SettingsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_layout, fragment)
+                    .commit();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -90,14 +88,23 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_game) {
+            QuestionListFragment fragment = new QuestionListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_layout, fragment)
+                    .commit();
+        } else if (id == R.id.nav_score) {
+            ScoreFragment fragment = new ScoreFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_layout, fragment)
+                    .commit();
+        } else if (id == R.id.nav_info) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.nav_setting) {
+            SettingsFragment fragment = new SettingsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_layout, fragment)
+                    .commit();
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -109,4 +116,15 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //FIXME LATER
+    }
+
+    @Override
+    public void onListFragmentInteraction(Question item) {
+        Intent intent = new Intent(MainActivity.this, QuestionsActivity.class);
+        intent.putExtra("item",item);
+        startActivity(intent);
+    }
 }

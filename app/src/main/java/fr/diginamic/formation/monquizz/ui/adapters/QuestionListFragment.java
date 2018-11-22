@@ -9,8 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import fr.diginamic.formation.monquizz.R;
+import fr.diginamic.formation.monquizz.database.QuestionsDatabaseHelper;
 import fr.diginamic.formation.monquizz.model.Question;
 import fr.diginamic.formation.monquizz.ui.activities.MainActivity;
 
@@ -25,7 +27,10 @@ public class QuestionListFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListQuestionListener mListener;
 
+    Button buttonDelete;
+
     public QuestionListFragment() {
+
     }
 
     // TODO: Customize parameter initialization
@@ -50,6 +55,9 @@ public class QuestionListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        List<Question> questions = new ArrayList<>();
+        questions = QuestionsDatabaseHelper.getInstance(getContext()).getAllQuestions();
+
         View view = inflater.inflate(R.layout.fragment_question_list, container, false);
 
         // Set the adapter
@@ -61,7 +69,7 @@ public class QuestionListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new QuestionRecyclerViewAdapter(MainActivity.list, mListener));
+            recyclerView.setAdapter(new QuestionRecyclerViewAdapter(questions, mListener));
         }
         return view;
     }

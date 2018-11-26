@@ -50,6 +50,14 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<QuestionRe
                 }
             }
         });
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mListener.onLongClickInteraction(holder.mItem);
+                return false;
+            }
+        });
     }
 
     @Override

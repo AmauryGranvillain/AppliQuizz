@@ -16,7 +16,7 @@ import fr.diginamic.formation.monquizz.model.Question;
 public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "questionsDatabase";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 6;
 
     private static final String TABLE_QUESTIONS = "questions";
 
@@ -113,7 +113,7 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
        } finally {
            db.endTransaction();
        }
-    }
+     }
 
     public void updateQuestion(Question q){
         SQLiteDatabase db = getWritableDatabase();
@@ -126,7 +126,7 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_ANSWER_3,q.getPropositions().get(2));
             values.put(KEY_ANSWER_4,q.getPropositions().get(3));
             values.put(KEY_GOOD_ANSWER,q.getBonneReponse());
-            db.update(TABLE_QUESTIONS, values, KEY_QUESTION_ENTITLED + "= ?", new String[]{q.getIntitule()});
+            db.update(TABLE_QUESTIONS, values, KEY_QUESTION_ID + "= ?", new String[]{q.getIntitule()});
         } catch (Exception e){
             Log.d("DEBUG_DATABASE","Error while trying to add question");
         } finally {
@@ -145,7 +145,7 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_ANSWER_3,q.getPropositions().get(2));
             values.put(KEY_ANSWER_4,q.getPropositions().get(3));
             values.put(KEY_GOOD_ANSWER,q.getBonneReponse());
-            db.delete(TABLE_QUESTIONS, KEY_QUESTION_ENTITLED + "= ?", new String[]{q.getIntitule()});
+            db.delete(TABLE_QUESTIONS, KEY_QUESTION_ID + "= ?", new String[]{q.getIntitule()});
         } catch (Exception e){
             Log.d("DEBUG_DATABASE", "Error while trying to delete all questions");
         } finally {

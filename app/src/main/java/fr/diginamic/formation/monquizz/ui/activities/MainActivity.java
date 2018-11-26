@@ -1,7 +1,6 @@
 package fr.diginamic.formation.monquizz.ui.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,22 +8,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import fr.diginamic.formation.monquizz.R;
+import fr.diginamic.formation.monquizz.api.APIClient;
 import fr.diginamic.formation.monquizz.database.QuestionsDatabaseHelper;
 import fr.diginamic.formation.monquizz.model.Question;
 import fr.diginamic.formation.monquizz.ui.adapters.QuestionListFragment;
-import fr.diginamic.formation.monquizz.ui.fragments.CreateQuestion;
+import fr.diginamic.formation.monquizz.ui.fragments.CreateQuestionFragment;
 import fr.diginamic.formation.monquizz.ui.fragments.ScoreFragment;
 import fr.diginamic.formation.monquizz.ui.fragments.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, QuestionListFragment.OnListQuestionListener, CreateQuestion.OnCreateListener {
+        implements NavigationView.OnNavigationItemSelectedListener, QuestionListFragment.OnListQuestionListener, CreateQuestionFragment.OnCreateListener, APIClient.APIResult {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,20 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.container_layout, fragment)
                     .commit();
         }
+
+        APIClient.getInstance().getQuestions(new APIClient.APIResult<List<Question>>() {
+            @Override
+            public void onFailure(IOException e) {
+
+            }
+
+            @Override
+            public void OnSuccess(List<Question> object) throws IOException {
+                for(int i =0; i < object.size(); i++){
+                    QuestionsDatabaseHelper.getInstance(MainActivity.this).addQuestion(object.get(i));
+                }
+            }
+        });
     }
 
     @Override
@@ -101,7 +117,7 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.container_layout, fragment)
                     .commit();
         } else if (id == R.id.nav_create_question) {
-            CreateQuestion fragment = new CreateQuestion();
+            CreateQuestionFragment fragment = new CreateQuestionFragment();
             fragment.listener = this;
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container_layout, fragment)
@@ -130,9 +146,29 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onLongClickInteraction(Question item) {
+        CreateQuestionFragment fragment = new CreateQuestionFragment();
+        fragment.listener = this;
+        fragment.setQuestion(item);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container_layout, fragment)
+                .commit();
+    }
+
+    @Override
     public void createQuestion(Question q) {
         getSupportFragmentManager().beginTransaction().replace(R.id.container_layout, new QuestionListFragment()).commit();
         QuestionsDatabaseHelper databaseHelper = QuestionsDatabaseHelper.getInstance(this);
         databaseHelper.addQuestion(q);
+    }
+
+    @Override
+    public void onFailure(IOException e) {
+
+    }
+
+    @Override
+    public void OnSuccess(Object object) throws IOException {
+
     }
 }

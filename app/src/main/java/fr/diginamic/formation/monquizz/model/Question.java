@@ -17,8 +17,8 @@ public class Question implements Parcelable {
 
     public int id;
     public String intitule;
-    private ArrayList<String> propositions;
-    private String bonneReponse;
+    public ArrayList<String> propositions;
+    public String bonneReponse;
     private int nbReponse;
 
     public Question(String intitule, int nbreponse) {

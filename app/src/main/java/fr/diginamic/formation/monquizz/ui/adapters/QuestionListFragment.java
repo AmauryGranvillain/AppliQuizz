@@ -94,5 +94,6 @@ public class QuestionListFragment extends Fragment {
 
     public interface OnListQuestionListener {
         void onListFragmentInteraction(Question item);
+        void onLongClickInteraction(Question item);
     }
 }

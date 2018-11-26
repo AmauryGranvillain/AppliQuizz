@@ -1,7 +1,5 @@
 package fr.diginamic.formation.monquizz.ui.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -14,25 +12,26 @@ import android.widget.Toast;
 
 import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.model.Question;
-import fr.diginamic.formation.monquizz.ui.activities.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CreateQuestion.OnCreateListener} interface
+ * {@link CreateQuestionFragment.OnCreateListener} interface
  * to handle interaction events.
- * Use the {@link CreateQuestion#newInstance} factory method to
+ * Use the {@link CreateQuestionFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CreateQuestion extends Fragment {
+public class CreateQuestionFragment extends Fragment {
 
     private RadioButton radioButton2, radioButton3, radioButton4, radioButton1;
 
     private EditText editTextQuestion, editTextAnswer1, editTextAnswer2, editTextAnswer3, editTextAnswer4, editTextAnswerSelected;
 
+    private Question questionEdit;
+
     public OnCreateListener listener;
 
-    public CreateQuestion() {
+    public CreateQuestionFragment() {
         // Required empty public constructor
     }
 
@@ -44,8 +43,8 @@ public class CreateQuestion extends Fragment {
         }
     };
 
-    public static CreateQuestion newInstance(String param1, String param2) {
-        CreateQuestion fragment = new CreateQuestion();
+    public static CreateQuestionFragment newInstance(String param1, String param2) {
+        CreateQuestionFragment fragment = new CreateQuestionFragment();
         return fragment;
     }
 
@@ -104,6 +103,10 @@ public class CreateQuestion extends Fragment {
             }
         });
 
+        if( questionEdit != null ){
+            setupQuestion(questionEdit);
+        }
+
         return rootView;
     }
 
@@ -140,7 +143,27 @@ public class CreateQuestion extends Fragment {
                     editTextAnswerSelected = editTextAnswer4;
                     break;
             }
+        }
+    }
 
+    public void setQuestion (Question q){
+        questionEdit = q;
+    }
+
+    public void setupQuestion (Question q){
+        editTextQuestion.setText(q.getIntitule());
+        editTextAnswer1.setText(q.getPropositions().get(0));
+        editTextAnswer2.setText(q.getPropositions().get(1));
+        editTextAnswer3.setText(q.getPropositions().get(2));
+        editTextAnswer4.setText(q.getPropositions().get(3));
+        if (q.getPropositions().get(0).equals(q.getBonneReponse())) {
+            radioButton1.setChecked(true);
+        } if (q.getPropositions().get(1).equals(q.getBonneReponse())){
+            radioButton2.setChecked(true);
+        } if (q.getPropositions().get(2).equals(q.getBonneReponse())){
+            radioButton3.setChecked(true);
+        } if (q.getPropositions().get(3).equals(q.getBonneReponse())) {
+            radioButton4.setChecked(true);
         }
     }
 

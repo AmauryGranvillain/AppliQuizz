@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import fr.diginamic.formation.monquizz.database.QuestionsDatabaseHelper;
 import fr.diginamic.formation.monquizz.model.Question;
 import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.ui.thread.TimeQuestionTask;
@@ -47,6 +48,8 @@ public class QuestionsActivity extends AppCompatActivity implements TimeQuestion
         public void onClick(View v) {
             Button tappedAnswer = (Button) v;
             answer = tappedAnswer.getText().toString();
+            question.userAnswer = answer;
+            QuestionsDatabaseHelper.getInstance(QuestionsActivity.this).userAnswerUpgrade(question);
             Intent intent = new Intent(QuestionsActivity.this, AnswerActivity.class);
             if(question.verifierReponse(answer)) {
                 intent.putExtra("result_answer", true);
@@ -66,7 +69,7 @@ public class QuestionsActivity extends AppCompatActivity implements TimeQuestion
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /**
+        /*
          * Setup question
          */
 
@@ -111,5 +114,6 @@ public class QuestionsActivity extends AppCompatActivity implements TimeQuestion
         Toast toast = Toast.makeText(QuestionsActivity.this, "Time elapsed !", Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.TOP|Gravity.CENTER_VERTICAL, 0, 0);
         toast.show();
+        finish();
     }
 }

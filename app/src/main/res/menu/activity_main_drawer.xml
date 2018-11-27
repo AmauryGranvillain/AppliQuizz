@@ -16,22 +16,18 @@
             android:id="@+id/nav_create_question"
             android:icon="@drawable/icon_menu_add_question"
             android:title="@string/nav_title_create_question" />
-        <item
-            android:id="@+id/nav_setting"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/nav_title_settings" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Parameters">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_setting"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="@string/nav_title_settings" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_info"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Info" />
         </menu>
     </item>
 

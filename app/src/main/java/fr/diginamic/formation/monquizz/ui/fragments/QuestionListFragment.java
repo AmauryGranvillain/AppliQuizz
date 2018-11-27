@@ -1,4 +1,4 @@
-package fr.diginamic.formation.monquizz.ui.adapters;
+package fr.diginamic.formation.monquizz.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,16 +14,15 @@ import android.widget.Button;
 import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.database.QuestionsDatabaseHelper;
 import fr.diginamic.formation.monquizz.model.Question;
-import fr.diginamic.formation.monquizz.ui.activities.MainActivity;
+import fr.diginamic.formation.monquizz.ui.adapters.QuestionRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionListFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+
     private int mColumnCount = 1;
     private OnListQuestionListener mListener;
 
@@ -33,8 +32,6 @@ public class QuestionListFragment extends Fragment {
 
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static QuestionListFragment newInstance(int columnCount) {
         QuestionListFragment fragment = new QuestionListFragment();
         Bundle args = new Bundle();

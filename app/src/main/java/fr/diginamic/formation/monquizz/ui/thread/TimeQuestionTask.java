@@ -28,7 +28,7 @@ public class TimeQuestionTask extends AsyncTask<Void, Integer, String> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        if(count <30){
+        if(count < 100){
             listener.progress(values);
         } else {
             listener.timeOut();

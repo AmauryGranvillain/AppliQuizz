@@ -8,7 +8,8 @@ import android.widget.TextView;
 
 import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.model.Question;
-import fr.diginamic.formation.monquizz.ui.adapters.QuestionListFragment.OnListQuestionListener;
+import fr.diginamic.formation.monquizz.ui.fragments.QuestionListFragment;
+import fr.diginamic.formation.monquizz.ui.fragments.QuestionListFragment.OnListQuestionListener;
 
 import java.util.List;
 

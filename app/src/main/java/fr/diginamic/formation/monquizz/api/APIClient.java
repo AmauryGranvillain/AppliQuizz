@@ -1,7 +1,5 @@
 package fr.diginamic.formation.monquizz.api;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,8 +12,10 @@ import java.util.List;
 import fr.diginamic.formation.monquizz.model.Question;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class APIClient {
@@ -36,7 +36,8 @@ public class APIClient {
         private static final String KEY_ANSWER_3 = "answer_3";
         private static final String KEY_ANSWER_4 = "answer_4";
         private static final String KEY_CORRECT_ANSWER = "correct_answer";
-        private static final String KEY_USER_ANSWER = "user_answer";
+        private static final String KEY_URL_IMG = "author_img_url";
+        private static final String KEY_AUTHOR = "author";
 
         public void getQuestions(final APIResult<List<Question>> result) {
 
@@ -69,6 +70,8 @@ public class APIClient {
                             question.addProposition(jsonObject.getString(KEY_ANSWER_3));
                             question.addProposition(jsonObject.getString(KEY_ANSWER_4));
                             question.bonneReponse = question.propositions.get(jsonObject.getInt(KEY_CORRECT_ANSWER)-1);
+                            question.url_img = jsonObject.getString(KEY_URL_IMG);
+                            question.author = jsonObject.getString(KEY_AUTHOR);
                             question.id = jsonObject.getInt(KEY_QUESTION_ID);
 
                             questions.add(question);
@@ -87,6 +90,62 @@ public class APIClient {
         //TODO : Faire un delete
 
         //TODO : Faire un Create
+
+    public void createQuestion(final APIResult<Question> result, Question q) {
+
+        MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
+        final JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(KEY_QUESTION_TITLE,q.getIntitule());
+            jsonObject.put(KEY_ANSWER_1,q.getPropositions().get(0));
+            jsonObject.put(KEY_ANSWER_2,q.getPropositions().get(1));
+            jsonObject.put(KEY_ANSWER_3,q.getPropositions().get(2));
+            jsonObject.put(KEY_ANSWER_4,q.getPropositions().get(3));
+            jsonObject.put(KEY_CORRECT_ANSWER,q.getBonneReponse());
+            jsonObject.put(KEY_URL_IMG,q.getUrl_img());
+            jsonObject.put(KEY_AUTHOR,q.getAuthor());
+            jsonObject.put(KEY_QUESTION_TITLE,q.id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Request request = null;
+        //TODO : préparer la request
+        request = new Request.Builder()
+                .url(KEY_URL_DATA + "/questions").method("POST",RequestBody.create(JSON_TYPE,jsonObject.toString()))
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.onFailure(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                        String getData = response.body().string();
+                        JSONObject json = new JSONObject(getData);
+                        Question newQuestion = new Question(json.getString(KEY_QUESTION_TITLE),4);
+                        newQuestion.addProposition(json.getString(KEY_ANSWER_1));
+                        newQuestion.addProposition(json.getString(KEY_ANSWER_2));
+                        newQuestion.addProposition(json.getString(KEY_ANSWER_3));
+                        newQuestion.addProposition(json.getString(KEY_ANSWER_4));
+                        newQuestion.bonneReponse = newQuestion.propositions.get(jsonObject.getInt(KEY_CORRECT_ANSWER)-1);
+                        newQuestion.url_img = json.getString(KEY_URL_IMG);
+                        newQuestion.author = json.getString(KEY_AUTHOR);
+                        newQuestion.id = json.getInt(KEY_QUESTION_ID);
+                    result.OnSuccess(newQuestion);
+
+                }
+                 catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
          public interface APIResult<T> {
             void onFailure(IOException e);

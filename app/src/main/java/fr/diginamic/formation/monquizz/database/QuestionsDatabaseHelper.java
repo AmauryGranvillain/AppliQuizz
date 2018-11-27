@@ -16,7 +16,7 @@ import fr.diginamic.formation.monquizz.model.Question;
 public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "questionsDatabase";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 9;
 
     private static final String TABLE_QUESTIONS = "questions";
 
@@ -28,6 +28,8 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_ANSWER_4 = "answer_4";
     private static final String KEY_GOOD_ANSWER = "good_answer";
     private static final String KEY_USER_ANSWER = "user_answer";
+    private static final String KEY_URL_IMG = "url_img";
+    private static final String KEY_AUTHOR = "author";
 
     private static QuestionsDatabaseHelper instance;
 
@@ -46,14 +48,16 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         String CREATE_QUESTIONS_TABLE = "CREATE TABLE " + TABLE_QUESTIONS +
                 "(" +
-                    KEY_QUESTION_ID + "INTEGER PRIMARY KEY," +
+                    KEY_QUESTION_ID + " INTEGER PRIMARY KEY," +
                     KEY_QUESTION_ENTITLED + " VARCHAR(255)," +
                     KEY_ANSWER_1 + " VARCHAR(255)," +
                     KEY_ANSWER_2 + " VARCHAR(255)," +
                     KEY_ANSWER_3 + " VARCHAR(255)," +
                     KEY_ANSWER_4 + " VARCHAR(255)," +
                     KEY_GOOD_ANSWER + " VARCHAR(255)," +
-                    KEY_USER_ANSWER + " VARCHAR(255)" +
+                    KEY_USER_ANSWER + " VARCHAR(255)," +
+                    KEY_URL_IMG + " VARCHAR(255)," +
+                    KEY_AUTHOR + " VARCHAR(255)" +
                 ")";
         db.execSQL(CREATE_QUESTIONS_TABLE);
     }
@@ -82,6 +86,10 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
                     newQuestion.addProposition(cursor.getString(cursor.getColumnIndex(KEY_ANSWER_3)));
                     newQuestion.addProposition(cursor.getString(cursor.getColumnIndex(KEY_ANSWER_4)));
                     newQuestion.setBonneReponse(cursor.getString(cursor.getColumnIndex(KEY_GOOD_ANSWER)));
+                    newQuestion.setUrl_img(cursor.getString(cursor.getColumnIndex(KEY_URL_IMG)));
+                    newQuestion.setAuthor(cursor.getString(cursor.getColumnIndex(KEY_AUTHOR)));
+                    newQuestion.id = cursor.getInt(cursor.getColumnIndex(KEY_QUESTION_ID));
+                    newQuestion.userAnswer = cursor.getString(cursor.getColumnIndex(KEY_USER_ANSWER));
                     questions.add(newQuestion);
                 } while(cursor.moveToNext());
             }
@@ -100,12 +108,17 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
        db.beginTransaction();
        try{
            ContentValues values = new ContentValues();
+           values.put(KEY_QUESTION_ID,q.id);
            values.put(KEY_QUESTION_ENTITLED,q.getIntitule());
            values.put(KEY_ANSWER_1,q.getPropositions().get(0));
            values.put(KEY_ANSWER_2,q.getPropositions().get(1));
            values.put(KEY_ANSWER_3,q.getPropositions().get(2));
            values.put(KEY_ANSWER_4,q.getPropositions().get(3));
            values.put(KEY_GOOD_ANSWER,q.getBonneReponse());
+           values.put(KEY_URL_IMG,q.getUrl_img());
+           values.put(KEY_AUTHOR,q.getAuthor());
+           values.put(KEY_QUESTION_ID,q.id);
+           values.put(KEY_USER_ANSWER,q.userAnswer);
            db.insertOrThrow(TABLE_QUESTIONS, null, values);
            db.setTransactionSuccessful();
        } catch (Exception e){
@@ -120,13 +133,16 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try{
             ContentValues values = new ContentValues();
+            values.put(KEY_QUESTION_ID,q.id);
             values.put(KEY_QUESTION_ENTITLED,q.getIntitule());
             values.put(KEY_ANSWER_1,q.getPropositions().get(0));
             values.put(KEY_ANSWER_2,q.getPropositions().get(1));
             values.put(KEY_ANSWER_3,q.getPropositions().get(2));
             values.put(KEY_ANSWER_4,q.getPropositions().get(3));
             values.put(KEY_GOOD_ANSWER,q.getBonneReponse());
-            db.update(TABLE_QUESTIONS, values, KEY_QUESTION_ID + "= ?", new String[]{q.getIntitule()});
+            values.put(KEY_URL_IMG,q.getUrl_img());
+            values.put(KEY_AUTHOR,q.getAuthor());
+            db.update(TABLE_QUESTIONS, values, KEY_QUESTION_ID + "= ?", new String[]{String.valueOf(q.id)});
         } catch (Exception e){
             Log.d("DEBUG_DATABASE","Error while trying to add question");
         } finally {
@@ -138,16 +154,61 @@ public class QuestionsDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try{
-            ContentValues values = new ContentValues();
-            values.put(KEY_QUESTION_ENTITLED,q.getIntitule());
-            values.put(KEY_ANSWER_1,q.getPropositions().get(0));
-            values.put(KEY_ANSWER_2,q.getPropositions().get(1));
-            values.put(KEY_ANSWER_3,q.getPropositions().get(2));
-            values.put(KEY_ANSWER_4,q.getPropositions().get(3));
-            values.put(KEY_GOOD_ANSWER,q.getBonneReponse());
-            db.delete(TABLE_QUESTIONS, KEY_QUESTION_ID + "= ?", new String[]{q.getIntitule()});
+            db.delete(TABLE_QUESTIONS, KEY_QUESTION_ID + "= ?", new String[]{String.valueOf(q.id)});
         } catch (Exception e){
             Log.d("DEBUG_DATABASE", "Error while trying to delete all questions");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public void synchroniseDatabaseQuestions(List<Question> serverQuestions) {
+
+        List<Question> databaseQuestions = getAllQuestions();
+
+
+        // Here we will choose if we need to add or to update the question return by the server
+        for (Question serverQuestion: serverQuestions) {
+            boolean found = false;
+            for (Question dataBaseQuestion: databaseQuestions) {
+                if (serverQuestion.id == dataBaseQuestion.id){
+                    found =true;
+                    break;
+                }
+            }
+
+            if (found) {
+                updateQuestion(serverQuestion);
+            } else {
+                addQuestion(serverQuestion);
+            }
+        }
+
+        // Now we want to delete the question if thy are not on the server anymore
+        for (Question dataBaseQuestion: databaseQuestions) {
+            boolean found = false;
+            for (Question serverQuestion: serverQuestions) {
+                if (serverQuestion.id == dataBaseQuestion.id){
+                    found =true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                deleteQuestion(dataBaseQuestion);
+            }
+        }
+    }
+
+    public void userAnswerUpgrade (Question q){
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try{
+            ContentValues values = new ContentValues();
+            values.put(KEY_USER_ANSWER,q.userAnswer);
+            db.update(TABLE_QUESTIONS, values, KEY_QUESTION_ID + "= ?", new String[]{String.valueOf(q.id)});
+        } catch (Exception e){
+            Log.d("DEBUG_DATABASE", "Error while trying to upload user answer");
         } finally {
             db.endTransaction();
         }

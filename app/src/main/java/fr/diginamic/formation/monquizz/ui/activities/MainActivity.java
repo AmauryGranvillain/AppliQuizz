@@ -8,10 +8,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,7 +19,7 @@ import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.api.APIClient;
 import fr.diginamic.formation.monquizz.database.QuestionsDatabaseHelper;
 import fr.diginamic.formation.monquizz.model.Question;
-import fr.diginamic.formation.monquizz.ui.adapters.QuestionListFragment;
+import fr.diginamic.formation.monquizz.ui.fragments.QuestionListFragment;
 import fr.diginamic.formation.monquizz.ui.fragments.CreateQuestionFragment;
 import fr.diginamic.formation.monquizz.ui.fragments.ScoreFragment;
 import fr.diginamic.formation.monquizz.ui.fragments.SettingsFragment;
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
+
         APIClient.getInstance().getQuestions(new APIClient.APIResult<List<Question>>() {
             @Override
             public void onFailure(IOException e) {
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void OnSuccess(List<Question> object) throws IOException {
                 for(int i =0; i < object.size(); i++){
-                    QuestionsDatabaseHelper.getInstance(MainActivity.this).addQuestion(object.get(i));
+                    QuestionsDatabaseHelper.getInstance(MainActivity.this).synchroniseDatabaseQuestions(object);
                 }
             }
         });
@@ -127,10 +127,9 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container_layout, fragment)
                     .commit();
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_info) {
+            Intent intent = new Intent(MainActivity.this, InfoActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -158,17 +157,23 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void createQuestion(Question q) {
         getSupportFragmentManager().beginTransaction().replace(R.id.container_layout, new QuestionListFragment()).commit();
-        QuestionsDatabaseHelper databaseHelper = QuestionsDatabaseHelper.getInstance(this);
-        databaseHelper.addQuestion(q);
+        APIClient.getInstance().createQuestion(new APIClient.APIResult<Question>(){
+
+            @Override
+            public void onFailure(IOException e) {
+                Log.e("Debug_Crea_QuestionData", "Question don't add");
+            }
+
+            @Override
+            public void OnSuccess(Question object) throws IOException {
+                QuestionsDatabaseHelper.getInstance(MainActivity.this).addQuestion(object);
+            }
+        },q);
     }
 
     @Override
-    public void onFailure(IOException e) {
-
-    }
+    public void onFailure(IOException e) {}
 
     @Override
-    public void OnSuccess(Object object) throws IOException {
-
-    }
+    public void OnSuccess(Object object) throws IOException {}
 }

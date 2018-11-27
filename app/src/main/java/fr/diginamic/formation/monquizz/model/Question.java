@@ -16,10 +16,11 @@ import java.util.ArrayList;
 public class Question implements Parcelable {
 
     public int id;
-    public String intitule;
+    public String intitule, url_img, author;
     public ArrayList<String> propositions;
     public String bonneReponse;
     private int nbReponse;
+    public String userAnswer;
 
     public Question(String intitule, int nbreponse) {
         this.intitule = intitule;
@@ -74,6 +75,11 @@ public class Question implements Parcelable {
     public int getNbReponse(){
         return nbReponse;
     }
+
+    public String getUrl_img(){ return url_img; }
+    public void setUrl_img(String urlImg){ this.url_img = urlImg; }
+    public String getAuthor(){ return author; }
+    public void setAuthor(String author){ this.author = author; }
 
     @Override
     public int describeContents() {

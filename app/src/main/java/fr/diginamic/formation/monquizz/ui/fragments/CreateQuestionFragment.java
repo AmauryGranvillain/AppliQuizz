@@ -1,17 +1,25 @@
 package fr.diginamic.formation.monquizz.ui.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import fr.diginamic.formation.monquizz.R;
 import fr.diginamic.formation.monquizz.model.Question;
+import fr.diginamic.formation.monquizz.receiver.NetworkChangeReceiver;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +32,8 @@ import fr.diginamic.formation.monquizz.model.Question;
 public class CreateQuestionFragment extends Fragment {
 
     private RadioButton radioButton2, radioButton3, radioButton4, radioButton1;
+
+    private FloatingActionButton statusTV;
 
     private EditText editTextQuestion, editTextAnswer1, editTextAnswer2, editTextAnswer3, editTextAnswer4, editTextAnswerSelected;
 
@@ -48,9 +58,11 @@ public class CreateQuestionFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerReceiver();
     }
 
     @Override
@@ -68,7 +80,7 @@ public class CreateQuestionFragment extends Fragment {
         editTextAnswer2 = rootView.findViewById(R.id.create_second_answer);
         editTextAnswer3 = rootView.findViewById(R.id.create_third_answer);
         editTextAnswer4 = rootView.findViewById(R.id.create_fourth_answer);
-
+        statusTV = rootView.findViewById(R.id.valid_create_button);
 
         radioButton1.setOnClickListener(checkRadioButton);
         radioButton2.setOnClickListener(checkRadioButton);
@@ -169,5 +181,49 @@ public class CreateQuestionFragment extends Fragment {
 
     public interface OnCreateListener {
         void createQuestion(Question q);
+    }
+
+    private void registerReceiver()
+    {
+        try
+        {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(NetworkChangeReceiver.NETWORK_CHANGE_ACTION);
+            getActivity().registerReceiver(internalNetworkChangeReceiver, intentFilter);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        registerReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(internalNetworkChangeReceiver);
+    }
+
+    InternalNetworkChangeReceiver internalNetworkChangeReceiver = new InternalNetworkChangeReceiver();
+    class InternalNetworkChangeReceiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+                if(!intent.getBooleanExtra("online",false)) {
+                    Toast toast = Toast.makeText(getContext(), "Vous n'êtes pas connecté à internet !", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
+                } else {
+                    Toast toast = Toast.makeText(getContext(), "Vous êtes connecté à internet !", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
+                }
+            Log.d("Debug Receiver", intent.getStringExtra("status"));
+        }
     }
 }
